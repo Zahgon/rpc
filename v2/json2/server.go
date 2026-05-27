@@ -6,9 +6,7 @@
 package json2
 
 import (
-	"bytes"
 	"encoding/json"
-	"io"
 	"net/http"
 
 	"github.com/gorilla/rpc/v2"
@@ -62,9 +60,7 @@ type serverResponse struct {
 // ----------------------------------------------------------------------------
 
 // NewCustomCodec returns a new JSON Codec based on passed encoder selector.
-func NewCustomCodec(encSel rpc.EncoderSelector) *Codec {
-	return &Codec{encSel: encSel}
-}
+func NewCustomCodec(encSel rpc.EncoderSelector) *Codec { _ = "STUB: not implemented"; return nil }
 
 // NewCustomCodecWithErrorMapper returns a new JSON Codec based on the passed encoder selector
 // and also accepts an errorMapper function.
@@ -73,16 +69,12 @@ func NewCustomCodec(encSel rpc.EncoderSelector) *Codec {
 // to decouple your service implementation from the codec itself, making possible to return abstract
 // errors in your service, and then mapping them here to the JSON-RPC error codes.
 func NewCustomCodecWithErrorMapper(encSel rpc.EncoderSelector, errorMapper func(error) error) *Codec {
-	return &Codec{
-		encSel:      encSel,
-		errorMapper: errorMapper,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // NewCodec returns a new JSON Codec.
-func NewCodec() *Codec {
-	return NewCustomCodec(rpc.DefaultEncoderSelector)
-}
+func NewCodec() *Codec { _ = "STUB: not implemented"; return nil }
 
 // Codec creates a CodecRequest to process each request.
 type Codec struct {
@@ -92,7 +84,8 @@ type Codec struct {
 
 // NewRequest returns a CodecRequest.
 func (c *Codec) NewRequest(r *http.Request) rpc.CodecRequest {
-	return newCodecRequest(r, c.encSel.Select(r), c.errorMapper)
+	_ = "STUB: not implemented"
+	return *new(rpc.CodecRequest)
 }
 
 // ----------------------------------------------------------------------------
@@ -101,43 +94,18 @@ func (c *Codec) NewRequest(r *http.Request) rpc.CodecRequest {
 
 // newCodecRequest returns a new CodecRequest.
 func newCodecRequest(r *http.Request, encoder rpc.Encoder, errorMapper func(error) error) rpc.CodecRequest {
-	req := new(serverRequest)
+	_ = "STUB: not implemented"
+	return *
 
 	// Copy request body for decoding and access of underlying methods
-	b, err := io.ReadAll(r.Body)
-	if err != nil {
-		err = &Error{
-			Code:    E_PARSE,
-			Message: err.Error(),
-			Data:    req,
-		}
-
-		return &CodecRequest{request: req, err: err, encoder: encoder, errorMapper: errorMapper}
-	}
-	// Close original body
-	r.Body.Close()
-
-	// Decode the request body and check if RPC method is valid.
-	err = json.Unmarshal(b, req)
-	if err != nil {
-		err = &Error{
-			Code:    E_PARSE,
-			Message: err.Error(),
-			Data:    req,
-		}
-	} else if req.Version != Version {
-		err = &Error{
-			Code:    E_INVALID_REQ,
-			Message: "jsonrpc must be " + Version,
-			Data:    req,
-		}
-	}
-
-	// Add close method to buffer and pass as request body
-	r.Body = io.NopCloser(bytes.NewBuffer(b))
-
-	return &CodecRequest{request: req, err: err, encoder: encoder, errorMapper: errorMapper}
+	new(rpc.CodecRequest)
 }
+
+// Close original body
+
+// Decode the request body and check if RPC method is valid.
+
+// Add close method to buffer and pass as request body
 
 // CodecRequest decodes and encodes a single request.
 type CodecRequest struct {
@@ -150,12 +118,7 @@ type CodecRequest struct {
 // Method returns the RPC method for the current request.
 //
 // The method uses a dotted notation as in "Service.Method".
-func (c *CodecRequest) Method() (string, error) {
-	if c.err == nil {
-		return c.request.Method, nil
-	}
-	return "", c.err
-}
+func (c *CodecRequest) Method() (string, error) { _ = "STUB: not implemented"; return "", nil }
 
 // ReadRequest fills the request object for the RPC method.
 //
@@ -170,80 +133,42 @@ func (c *CodecRequest) Method() (string, error) {
 // absence of expected names MAY result in an error being
 // generated. The names MUST match exactly, including
 // case, to the method's expected parameters.
-func (c *CodecRequest) ReadRequest(args interface{}) error {
-	if c.err == nil && c.request.Params != nil {
-		// Note: if c.request.Params is nil it's not an error, it's an optional member.
-		// JSON params structured object. Unmarshal to the args object.
-		if err := json.Unmarshal(*c.request.Params, args); err != nil {
-			// Clearly JSON params is not a structured object,
-			// fallback and attempt an unmarshal with JSON params as
-			// array value and RPC params is struct. Unmarshal into
-			// array containing the request struct.
-			params := [1]interface{}{args}
-			if err = json.Unmarshal(*c.request.Params, &params); err != nil {
-				c.err = &Error{
-					Code:    E_INVALID_REQ,
-					Message: err.Error(),
-					Data:    c.request.Params,
-				}
-			}
-		}
-	}
-	return c.err
-}
+func (c *CodecRequest) ReadRequest(args interface{}) error { _ = "STUB: not implemented"; return nil }
+
+// Note: if c.request.Params is nil it's not an error, it's an optional member.
+// JSON params structured object. Unmarshal to the args object.
+
+// Clearly JSON params is not a structured object,
+// fallback and attempt an unmarshal with JSON params as
+// array value and RPC params is struct. Unmarshal into
+// array containing the request struct.
 
 // WriteResponse encodes the response and writes it to the ResponseWriter.
 func (c *CodecRequest) WriteResponse(w http.ResponseWriter, reply interface{}) {
-	res := &serverResponse{
-		Version: Version,
-		Result:  reply,
-		Id:      c.request.Id,
-	}
-	c.writeServerResponse(w, res)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (c *CodecRequest) WriteError(w http.ResponseWriter, status int, err error) {
-	err = c.tryToMapIfNotAnErrorAlready(err)
-	jsonErr, ok := err.(*Error)
-	if !ok {
-		jsonErr = &Error{
-			Code:    E_SERVER,
-			Message: err.Error(),
-		}
-	}
-	res := &serverResponse{
-		Version: Version,
-		Error:   jsonErr,
-		Id:      c.request.Id,
-	}
-	c.writeServerResponse(w, res)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (c CodecRequest) tryToMapIfNotAnErrorAlready(err error) error {
-	if _, ok := err.(*Error); ok || c.errorMapper == nil {
-		return err
-	}
-	return c.errorMapper(err)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (c *CodecRequest) writeServerResponse(w http.ResponseWriter, res *serverResponse) {
+	_ = "STUB: not implemented"
 	// Id is null for notifications and they don't have a response, unless we couldn't even parse the JSON, in that
 	// case we can't know whether it was intended to be a notification
-	if c.request.Id != nil || isParseErrorResponse(res) {
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		encoder := json.NewEncoder(c.encoder.Encode(w))
-		err := encoder.Encode(res)
-
-		// Not sure in which case will this happen. But seems harmless.
-		if err != nil {
-			rpc.WriteError(w, http.StatusInternalServerError, err.Error())
-		}
-	}
+	return
 }
 
-func isParseErrorResponse(res *serverResponse) bool {
-	return res != nil && res.Error != nil && res.Error.Code == E_PARSE
-}
+// Not sure in which case will this happen. But seems harmless.
+
+func isParseErrorResponse(res *serverResponse) bool { _ = "STUB: not implemented"; return false }
 
 type EmptyResponse struct {
 }

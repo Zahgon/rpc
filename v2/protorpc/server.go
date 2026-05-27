@@ -6,14 +6,8 @@
 package protorpc
 
 import (
-	"bytes"
 	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/rpc/v2"
 )
@@ -53,16 +47,19 @@ type serverResponse struct {
 
 // NewCodec returns a new ProtoRPC Codec.
 func NewCodec() *Codec {
-	return &Codec{}
+	_ = "STUB: not implemented"
+
+	// Codec creates a CodecRequest to process each request.
+	return nil
 }
 
-// Codec creates a CodecRequest to process each request.
 type Codec struct {
 }
 
 // NewRequest returns a CodecRequest.
 func (c *Codec) NewRequest(r *http.Request) rpc.CodecRequest {
-	return newCodecRequest(r)
+	_ = "STUB: not implemented"
+	return *new(rpc.CodecRequest)
 }
 
 // ----------------------------------------------------------------------------
@@ -71,34 +68,16 @@ func (c *Codec) NewRequest(r *http.Request) rpc.CodecRequest {
 
 // newCodecRequest returns a new CodecRequest.
 func newCodecRequest(r *http.Request) rpc.CodecRequest {
+	_ = "STUB: not implemented"
 	// Decode the request body and check if RPC method is valid.
-	req := new(serverRequest)
-	path := r.URL.Path
-	index := strings.LastIndex(path, "/")
-	if index < 0 {
-		return &CodecRequest{request: req, err: fmt.Errorf("rpc: no method: %s", path)}
-	}
-	req.Method = path[index+1:]
-
-	// Copy request body for decoding and access of underlying methods
-	b, err := io.ReadAll(r.Body)
-	if err != nil {
-		return &CodecRequest{request: req, err: err}
-	}
-	// Close original body
-	r.Body.Close()
-
-	err = json.Unmarshal(b, &req.Params)
-	var codecErr error
-	if err != io.EOF {
-		codecErr = err
-	}
-
-	// Add close method to buffer and pass as request body
-	r.Body = io.NopCloser(bytes.NewBuffer(b))
-
-	return &CodecRequest{request: req, err: codecErr}
+	return *new(rpc.CodecRequest)
 }
+
+// Copy request body for decoding and access of underlying methods
+
+// Close original body
+
+// Add close method to buffer and pass as request body
 
 // CodecRequest decodes and encodes a single request.
 type CodecRequest struct {
@@ -109,54 +88,23 @@ type CodecRequest struct {
 // Method returns the RPC method for the current request.
 //
 // The method uses a dotted notation as in "Service.Method".
-func (c *CodecRequest) Method() (string, error) {
-	if c.err == nil {
-		return c.request.Method, nil
-	}
-	return "", c.err
-}
+func (c *CodecRequest) Method() (string, error) { _ = "STUB: not implemented"; return "", nil }
 
 // ReadRequest fills the request object for the RPC method.
-func (c *CodecRequest) ReadRequest(args interface{}) error {
-	if c.err == nil {
-		if c.request.Params != nil {
-			c.err = json.Unmarshal(*c.request.Params, args)
-		} else {
-			c.err = errors.New("rpc: method request ill-formed: missing params field")
-		}
-	}
-	return c.err
-}
+func (c *CodecRequest) ReadRequest(args interface{}) error { _ = "STUB: not implemented"; return nil }
 
 // WriteResponse encodes the response and writes it to the ResponseWriter.
 func (c *CodecRequest) WriteResponse(w http.ResponseWriter, reply interface{}) {
-	res := &serverResponse{
-		Result: reply,
-		Error:  &null,
-		Id:     c.request.Id,
-	}
-	c.writeServerResponse(w, 200, res)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (c *CodecRequest) WriteError(w http.ResponseWriter, status int, err error) {
-	res := &serverResponse{
-		Result: &struct {
-			ErrorMessage interface{} `json:"error_message"`
-		}{err.Error()},
-		Id: c.request.Id,
-	}
-	c.writeServerResponse(w, status, res)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (c *CodecRequest) writeServerResponse(w http.ResponseWriter, status int, res *serverResponse) {
-	b, err := json.Marshal(res.Result)
-	if err != nil {
-		rpc.WriteError(w, 400, err.Error())
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(status)
-	if _, err = w.Write(b); err != nil {
-		log.Fatal(err)
-	}
+	_ = "STUB: not implemented"
+	return
 }

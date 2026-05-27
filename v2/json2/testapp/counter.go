@@ -25,8 +25,7 @@ type IncrReq struct {
 
 // Notification.
 func (c *Counter) Incr(r *http.Request, req *IncrReq, res *json2.EmptyResponse) error {
-	log.Printf("<- Incr %+v", *req)
-	c.Count += req.Delta
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -34,9 +33,7 @@ type GetReq struct {
 }
 
 func (c *Counter) Get(r *http.Request, req *GetReq, res *Counter) error {
-	log.Printf("<- Get %+v", *req)
-	*res = *c
-	log.Printf("-> %v", *res)
+	_ = "STUB: not implemented"
 	return nil
 }
 

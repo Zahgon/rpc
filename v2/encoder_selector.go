@@ -20,7 +20,8 @@ type encoder struct {
 }
 
 func (_ *encoder) Encode(w http.ResponseWriter) io.Writer {
-	return w
+	_ = "STUB: not implemented"
+	return *new(io.Writer)
 }
 
 var DefaultEncoder = &encoder{}
@@ -37,7 +38,8 @@ type encoderSelector struct {
 }
 
 func (_ *encoderSelector) Select(_ *http.Request) Encoder {
-	return DefaultEncoder
+	_ = "STUB: not implemented"
+	return *new(Encoder)
 }
 
 var DefaultEncoderSelector = &encoderSelector{}

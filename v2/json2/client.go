@@ -6,12 +6,8 @@
 package json2
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"io"
-	"log"
-	"math"
-	"math/big"
 )
 
 // ----------------------------------------------------------------------------
@@ -43,41 +39,13 @@ type clientResponse struct {
 
 // EncodeClientRequest encodes parameters for a JSON-RPC client request.
 func EncodeClientRequest(method string, args interface{}) ([]byte, error) {
-	val, err := rand.Int(rand.Reader, big.NewInt(int64(math.MaxInt64)))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	c := &clientRequest{
-		Version: "2.0",
-		Method:  method,
-		Params:  args,
-		Id:      val.Uint64(),
-	}
-	return json.Marshal(c)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // DecodeClientResponse decodes the response body of a client request into
 // the interface reply.
 func DecodeClientResponse(r io.Reader, reply interface{}) error {
-	var c clientResponse
-	if err := json.NewDecoder(r).Decode(&c); err != nil {
-		return err
-	}
-	if c.Error != nil {
-		jsonErr := &Error{}
-		if err := json.Unmarshal(*c.Error, jsonErr); err != nil {
-			return &Error{
-				Code:    E_SERVER,
-				Message: string(*c.Error),
-			}
-		}
-		return jsonErr
-	}
-
-	if c.Result == nil {
-		return ErrNullResult
-	}
-
-	return json.Unmarshal(*c.Result, reply)
+	_ = "STUB: not implemented"
+	return nil
 }

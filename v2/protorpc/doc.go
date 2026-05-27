@@ -31,15 +31,18 @@ differs in that it uses HTTP as its envelope.
 Example:
 POST /Service.Method
 Request:
-{
-  "requestField1": "value1",
-  "requestField2": "value2",
-}
+
+	{
+	  "requestField1": "value1",
+	  "requestField2": "value2",
+	}
+
 Response:
-{
-  "responseField1": "value1",
-  "responseField2": "value2",
-}
+
+	{
+	  "responseField1": "value1",
+	  "responseField2": "value2",
+	}
 
 Check the gorilla/rpc documentation for more details:
 

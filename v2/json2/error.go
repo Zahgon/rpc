@@ -34,6 +34,4 @@ type Error struct {
 	Data interface{} `json:"data"` /* optional */
 }
 
-func (e *Error) Error() string {
-	return e.Message
-}
+func (e *Error) Error() string { _ = "STUB: not implemented"; return "" }

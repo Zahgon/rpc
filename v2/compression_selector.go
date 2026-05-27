@@ -10,8 +10,6 @@ import (
 	"compress/gzip"
 	"io"
 	"net/http"
-	"strings"
-	"unicode"
 )
 
 // gzipWriter writes and closes the gzip writer.
@@ -19,18 +17,15 @@ type gzipWriter struct {
 	w *gzip.Writer
 }
 
-func (gw *gzipWriter) Write(p []byte) (n int, err error) {
-	defer gw.w.Close()
-	return gw.w.Write(p)
-}
+func (gw *gzipWriter) Write(p []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 // gzipEncoder implements the gzip compressed http encoder.
 type gzipEncoder struct {
 }
 
 func (enc *gzipEncoder) Encode(w http.ResponseWriter) io.Writer {
-	w.Header().Set("Content-Encoding", "gzip")
-	return &gzipWriter{gzip.NewWriter(w)}
+	_ = "STUB: not implemented"
+	return *new(io.Writer)
 }
 
 // flateWriter writes and closes the flate writer.
@@ -38,22 +33,15 @@ type flateWriter struct {
 	w *flate.Writer
 }
 
-func (fw *flateWriter) Write(p []byte) (n int, err error) {
-	defer fw.w.Close()
-	return fw.w.Write(p)
-}
+func (fw *flateWriter) Write(p []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 // flateEncoder implements the flate compressed http encoder.
 type flateEncoder struct {
 }
 
 func (enc *flateEncoder) Encode(w http.ResponseWriter) io.Writer {
-	fw, err := flate.NewWriter(w, flate.DefaultCompression)
-	if err != nil {
-		return w
-	}
-	w.Header().Set("Content-Encoding", "deflate")
-	return &flateWriter{fw}
+	_ = "STUB: not implemented"
+	return *new(io.Writer)
 }
 
 // CompressionSelector generates the compressed http encoder.
@@ -62,19 +50,6 @@ type CompressionSelector struct {
 
 // Select method selects the correct compression encoder based on http HEADER.
 func (*CompressionSelector) Select(r *http.Request) Encoder {
-	encHeader := r.Header.Get("Accept-Encoding")
-	encTypes := strings.FieldsFunc(encHeader, func(r rune) bool {
-		return unicode.IsSpace(r) || r == ','
-	})
-
-	for _, enc := range encTypes {
-		switch enc {
-		case "gzip":
-			return &gzipEncoder{}
-		case "deflate":
-			return &flateEncoder{}
-		}
-	}
-
-	return DefaultEncoder
+	_ = "STUB: not implemented"
+	return *new(Encoder)
 }
